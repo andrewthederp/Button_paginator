@@ -1,4 +1,4 @@
-##### A python library created to make button pagination easy
+# A python library created to make button pagination easy
 
 ---
 
@@ -47,7 +47,7 @@ async def test(ctx):
  - "goto": same as page/show will show the current embed number but when pressed will prompt the user to type a page number then will go to the number written
  - "lock": Removes all the buttons
 
-# Since `pg.Paginator` is a normal discord.ui.View subclassed class, you can add your own buttons to it!
+## Since `pg.Paginator` is a normal discord.ui.View subclassed class, you can add your own buttons to it!
 ```py
 import button_paginator as pg
 
