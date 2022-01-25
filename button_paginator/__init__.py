@@ -133,7 +133,6 @@ class Paginator(discord.ui.View):
             A predicate to check what to wait for.
         timeout: Optional[:class:`float`]
             The number of seconds to wait before timing out.
-            
         """
         super().__init__(timeout=timeout)
         self.check = check
@@ -145,12 +144,12 @@ class Paginator(discord.ui.View):
         self.page_button = None
 
     def default_pagination(self):
-        self.add_item("first", label='first')
-        self.add_item("back", label='back')
-        self.add_item("page", label='page')
-        self.add_item("next", label='next')
-        self.add_item("last", label='last')
-        self.add_item("delete", label='Close paginator')
+        self.add_button("first", label='first')
+        self.add_button("back", label='back')
+        self.add_button("page", label='page')
+        self.add_button("next", label='next')
+        self.add_button("last", label='last')
+        self.add_button("delete", label='Close paginator')
         
     async def edit_embed(self, interaction):
         current = self.embeds[self.page]
