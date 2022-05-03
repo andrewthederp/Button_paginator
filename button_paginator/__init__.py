@@ -70,40 +70,38 @@ class show_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, disabled=True, row=row)
 
-class goto_page(discord.ui.Button):
-    def __init__(self, label, emoji, style, row, message_check):
-        super().__init__(label=label, emoji=emoji, style=style, row=row)
-        self.message_check = message_check
+class goto_modal(discord.ui.Modal, title="Go to"):
+    def __init__(self, button):
+        self.button = button
+        page_num = discord.ui.TextInput(
+            label='Page',
+            placeholder=f'page number 1-{len(button.view.embeds)}'
+            style=discord.TextStyle.short,
+            required=True
+            )
 
-    async def callback(self, interaction):
-        view = self.view
-        await interaction.response.defer()
+    async def on_submit(self, interaction: discord.Interaction):
         try:
-            msg_td = await view.destination.send(f"Send a page number 1-{len(view.embeds)}")
-            try:
-                msg = await view.bot.wait_for('message', check = self.message_check if self.message_check else (lambda m: m.author == interaction.user), timeout=60)
-            except asyncio.TimeoutError:
-                return await msg_td.delete()
+            view = self.button.view
+            num = int(self.page_num.value)-1
+
+            if num in range(len(view.embeds)):
+                view.page = num
             else:
-                await msg_td.delete()
-                try:
-                    await msg.delete()
-                except discord.Forbidden:
-                    pass
-                try:
-                    inp = int(msg.content)-1
-                except ValueError:
-                    return await interaction.followup.send("That's not a number", ephemeral=True)
-                else:
-                    if inp in range(len(view.embeds)):
-                        view.page = inp
-                    else:
-                        return await interaction.followup.send("Invalid number: aborting", ephemeral=True)
+                return await interaction.followup.send("Invalid number: aborting", ephemeral=True)
 
             view.update_view()
             await view.edit_embed(interaction)
-        except discord.NotFound:
-            return
+        except ValueError:
+            return await interaction.response.send_message("That's not a number", ephemeral=True)
+
+class goto_page(discord.ui.Button):
+    def __init__(self, label, emoji, style, row):
+        super().__init__(label=label, emoji=emoji, style=style, row=row)
+
+    async def callback(self, interaction):
+        await interaction.response.send_modal(goto_modal(self))
+
 
 class lock_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
@@ -208,7 +206,7 @@ class Paginator(discord.ui.View):
         except (NameError,AttributeError):
             pass
 
-    def add_button(self, action, /, *, label="", emoji=None, style=discord.ButtonStyle.grey, row=None, message_check=None):
+    def add_button(self, action, /, *, label="", emoji=None, style=discord.ButtonStyle.grey, row=None):
         action = action.strip().lower()
         if action not in ["first","prev","previous","back","delete","next","last","end","page","show","goto","lock"]:
             return
@@ -222,7 +220,7 @@ class Paginator(discord.ui.View):
             self.add_item(button)
             self.update_view()
         elif action == "goto":
-            button = goto_page("1", emoji, style, row, message_check)
+            button = goto_page("1", emoji, style, row)
             self.page_button = button
             self.add_item(button)
             self.update_view()
@@ -237,9 +235,9 @@ class Paginator(discord.ui.View):
         elif action == "lock":
             self.add_item(lock_page(label, emoji, style, row))
 
-def embed_creator(text, num, /, *, title='', prefix = '', suffix='', color=None, colour = None):
+def embed_creator(text, num, /, *, title='', prefix = '', suffix='', color=discord.Embed.Empty, colour = discord.Embed.Empty):
     """A helper function which takes some string and returns a list of embeds"""
-    if color and colour:
-        raise ValueError("Can't have both \"color\" and \"colour\" kwargs")
+    if color != discord.Embed.Empty and colour != discord.Embed.Empty:
+        raise ValueError
 
-    return [discord.Embed(title=title, description = prefix+(text[i:i+num])+suffix, color=color if color != None else None) for i in range(0, len(text), num)]
+    return [discord.Embed(title=title, description = prefix+(text[i:i+num])+suffix, color=color if color != discord.Embed.Empty else colour) for i in range(0, len(text), num)]
