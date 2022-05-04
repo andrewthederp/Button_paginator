@@ -74,13 +74,13 @@ class goto_modal(discord.ui.Modal, title="Go to"):
     def __init__(self, button):
         super().__init__()
         self.button = button
-        page_num = discord.ui.TextInput(
+        self.page_num = discord.ui.TextInput(
             label='Page',
             placeholder=f'page number 1-{len(self.button.view.embeds)}',
             style=discord.TextStyle.short,
             required=True
             )
-        self.add_item(page_num)
+        self.add_item(self.page_num)
 
     async def on_submit(self, interaction: discord.Interaction):
         try:
