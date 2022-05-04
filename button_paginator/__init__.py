@@ -71,19 +71,19 @@ class show_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, disabled=True, row=row)
 
 class goto_modal(discord.ui.Modal, title="Go to"):
-    def __init__(self):
+    def __init__(self, button):
         super().__init__()
-        # self.button = button
+        self.button = button
         page_num = discord.ui.TextInput(
             label='Page',
-            placeholder=f'page number 1-{len(self.view.embeds)}',
+            placeholder=f'page number 1-{len(self.button.view.embeds)}',
             style=discord.TextStyle.short,
             required=True
             )
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            view = self.view
+            view = self.button.view
             num = int(self.page_num.value)-1
 
             if num in range(len(view.embeds)):
