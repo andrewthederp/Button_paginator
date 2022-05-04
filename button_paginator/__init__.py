@@ -75,7 +75,7 @@ class goto_modal(discord.ui.Modal, title="Go to"):
         self.button = button
         page_num = discord.ui.TextInput(
             label='Page',
-            placeholder=f'page number 1-{len(button.view.embeds)}'
+            placeholder=f'page number 1-{len(button.view.embeds)}',
             style=discord.TextStyle.short,
             required=True
             )
