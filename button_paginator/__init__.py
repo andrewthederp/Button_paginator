@@ -101,13 +101,13 @@ class goto_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await interaction.response.send_modal(goto_modal())
+        await interaction.response.send_modal(goto_modal(self))
 
 
 class lock_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
-
+        
     async def callback(self, interaction):
         view = self.view
         view.clear_items()
