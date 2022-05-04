@@ -235,9 +235,9 @@ class Paginator(discord.ui.View):
         elif action == "lock":
             self.add_item(lock_page(label, emoji, style, row))
 
-def embed_creator(text, num, /, *, title='', prefix = '', suffix='', color=discord.Embed.Empty, colour = discord.Embed.Empty):
+def embed_creator(text, num, /, *, title='', prefix = '', suffix='', color=None, colour = None):
     """A helper function which takes some string and returns a list of embeds"""
-    if color != discord.Embed.Empty and colour != discord.Embed.Empty:
+    if color != None and colour != None:
         raise ValueError
 
-    return [discord.Embed(title=title, description = prefix+(text[i:i+num])+suffix, color=color if color != discord.Embed.Empty else colour) for i in range(0, len(text), num)]
+    return [discord.Embed(title=title, description = prefix+(text[i:i+num])+suffix, color=color if color != None else colour) for i in range(0, len(text), num)]
