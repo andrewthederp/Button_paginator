@@ -71,30 +71,30 @@ class show_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, disabled=True, row=row)
 
 class goto_modal(discord.ui.Modal, title="Go to"):
-    def __init__(self, button):
+    def __init__(self):
         super().__init__()
-        self.button = button
+        # self.button = button
         page_num = discord.ui.TextInput(
             label='Page',
-            placeholder=f'page number 1-{len(button.view.embeds)}',
+            placeholder=f'page number 1-{len(self.view.embeds)}',
             style=discord.TextStyle.short,
             required=True
             )
 
-    async def on_submit(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         try:
-            view = self.button.view
+            view = self.view
             num = int(self.page_num.value)-1
 
             if num in range(len(view.embeds)):
                 view.page = num
             else:
-                return await interaction.followup.send("Invalid number: aborting", ephemeral=True)
+                return await interaction.followup.send(content="Invalid number: aborting", ephemeral=True)
 
             view.update_view()
             await view.edit_embed(interaction)
         except ValueError:
-            return await interaction.response.send_message("That's not a number", ephemeral=True)
+            return await interaction.response.send_message(content="That's not a number", ephemeral=True)
 
 class goto_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
