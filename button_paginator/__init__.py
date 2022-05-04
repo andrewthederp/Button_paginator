@@ -101,7 +101,7 @@ class goto_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await interaction.response.send_modal(goto_modal(self))
+        await interaction.response.send_modal(goto_modal())
 
 
 class lock_page(discord.ui.Button):
