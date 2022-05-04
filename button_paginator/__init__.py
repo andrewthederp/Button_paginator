@@ -72,6 +72,7 @@ class show_page(discord.ui.Button):
 
 class goto_modal(discord.ui.Modal, title="Go to"):
     def __init__(self, button):
+        super().__init__()
         self.button = button
         page_num = discord.ui.TextInput(
             label='Page',
