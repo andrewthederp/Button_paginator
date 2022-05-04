@@ -81,7 +81,7 @@ class goto_modal(discord.ui.Modal, title="Go to"):
             required=True
             )
 
-    async def callback(self, interaction: discord.Interaction):
+    async def on_submit(self, interaction: discord.Interaction):
         try:
             view = self.button.view
             num = int(self.page_num.value)-1
