@@ -80,6 +80,7 @@ class goto_modal(discord.ui.Modal, title="Go to"):
             style=discord.TextStyle.short,
             required=True
             )
+        self.add_item(page_num)
 
     async def on_submit(self, interaction: discord.Interaction):
         try:
