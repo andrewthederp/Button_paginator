@@ -165,7 +165,7 @@ class Paginator(discord.ui.View):
                     dct["content"] = item
                 elif isinstance(item, discord.Embed):
                     dct["embed"] = item
-            await interaction.message.edit(content = dct.get("content", None), embed = dct.get("embed", None), view=self)
+            await interaction.response.edit_message(content = dct.get("content", None), embed = dct.get("embed", None), view=self)
 
     async def start(self):
         try:
