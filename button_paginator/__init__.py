@@ -155,11 +155,11 @@ class Paginator(discord.ui.View):
     async def edit_embed(self, interaction):
         current = self.embeds[self.page]
         if isinstance(current, str):
-            await interaction.message.edit(content=current, embed=None, file=None, view=self)
+            await interaction.response.edit_message(content=current, embed=None, attachments=[], view=self)
         elif isinstance(current, discord.Embed):
-            await interaction.message.edit(content=None, embed=current, file=None, view=self)
+            await interaction.response.edit_message(content=None, embed=current, attachments=[], view=self)
         elif isinstance(current, discord.File):
-            self.message = await self.destination.send(content=None, embed=None, file=current, view=self)
+            await interaction.response.edit_message(content=None, embed=None, attachments=[current], view=self)
         elif isinstance(current, tuple):
             dct = {}
             for item in current:
@@ -168,8 +168,8 @@ class Paginator(discord.ui.View):
                 elif isinstance(item, discord.Embed):
                     dct["embed"] = item
                 elif isinstance(item, discord.File):
-                    dct["file"] = item
-            await interaction.response.edit_message(content = dct.get("content", None), embed = dct.get("embed", None), file=dct.get('file', None), view=self)
+                    dct["file"] = [item]
+            await interaction.response.edit_message(content = dct.get("content", None), embed = dct.get("embed", None), attachments=dct.get('file', None), view=self)
 
     async def start(self):
         try:
