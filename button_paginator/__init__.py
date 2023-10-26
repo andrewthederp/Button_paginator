@@ -53,7 +53,7 @@ class delete_page(discord.ui.Button):
         
     async def callback(self, interaction):
         view = self.view
-        await view.message.delete()
+        await interaction.message.delete()
         view.stop()
         
 class end_page(discord.ui.Button):
