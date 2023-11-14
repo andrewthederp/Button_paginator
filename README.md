@@ -37,15 +37,15 @@ async def test(ctx):
 ```
 
 - All actions
- - "first": Goes to the first embed
- - "prev"/"previous"/"back": Goes to the embed before the current embed
- - "delete": Deletes the message
- - "next": Goes to the embed after the current embed
- - "last": Goes to the last embed
- - "end": Disables all the buttons
- - "page"/"show": Shows the current embed number (always disabled)
- - "goto": same as page/show will show the current embed number but when pressed will prompt the user to type a page number then will go to the number written
- - "lock": Removes all the buttons
+ - `first`: Goes to the first embed
+ - `prev`/`previous`/`back`: Goes to the embed before the current embed
+ - `delete`: Deletes the message
+ - `next`: Goes to the embed after the current embed
+ - `last`: Goes to the last embed
+ - `end`: Disables all the buttons
+ - `page`/`show`: Shows the current embed number (always disabled)
+ - `goto`: same as page/show will show the current embed number but when pressed will prompt the user to type a page number then will go to the number written
+ - `lock`: Removes all the buttons
 
 ## Since `pg.Paginator` is a normal discord.ui.View subclassed class, you can add your own buttons to it!
 ```py
