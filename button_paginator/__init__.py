@@ -11,8 +11,8 @@ class prev_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await view.before_press(self, interaction)
         view = self.view
+        await view.before_press(self, interaction)
         view.page -= 1
         if view.page < 0:
             view.page = len(view.embeds)-1
@@ -25,8 +25,8 @@ class first_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         view.page = 0
         view.update_view()
         await view.edit_embed(interaction)
@@ -37,8 +37,8 @@ class next_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         view.page += 1
         if view.page == len(view.embeds):
             view.page = 0
@@ -51,8 +51,8 @@ class last_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         view.page = len(view.embeds)-1
         view.update_view()
         await view.edit_embed(interaction)
@@ -63,8 +63,8 @@ class delete_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         await interaction.message.delete()
         view.stop()
         await view.after_press(self, interaction)
@@ -74,8 +74,8 @@ class end_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         for child in view.children:
             child.disabled = True
         await view.edit_embed(interaction)
@@ -118,7 +118,7 @@ class goto_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
+        await self.view.after_press(self, interaction)
         await interaction.response.send_modal(goto_modal(self))
         await view.after_press(self, interaction)
 
@@ -128,8 +128,8 @@ class lock_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
-        await view.after_press(self, interaction)
         view = self.view
+        await view.after_press(self, interaction)
         view.clear_items()
         await view.edit_embed(interaction)
         view.stop()
