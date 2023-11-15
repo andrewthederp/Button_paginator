@@ -6,7 +6,7 @@ desc = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="button_paginator",
-    version="1.0.4",
+    version="1.0.5",
     description="A module which allows easy implementation of button pagination",
     long_description=desc,
     long_description_content_type="text/markdown",
