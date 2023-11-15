@@ -3,69 +3,84 @@ from inspect import iscoroutinefunction as iscoro, isfunction as isfunc
 import asyncio
 import discord
 
+async def empty_func(button_pressed, interaction):
+    pass
+
 class prev_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
+        await view.before_press(self, interaction)
         view = self.view
         view.page -= 1
         if view.page < 0:
             view.page = len(view.embeds)-1
         view.update_view()
         await view.edit_embed(interaction)
+        await view.after_press(self, interaction)
 
 class first_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         view.page = 0
         view.update_view()
         await view.edit_embed(interaction)
+        await view.after_press(self, interaction)
 
 class next_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         view.page += 1
         if view.page == len(view.embeds):
             view.page = 0
         view.update_view()
         await view.edit_embed(interaction)
+        await view.after_press(self, interaction)
 
 class last_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         view.page = len(view.embeds)-1
         view.update_view()
         await view.edit_embed(interaction)
+        await view.after_press(self, interaction)
 
 class delete_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         await interaction.message.delete()
         view.stop()
+        await view.after_press(self, interaction)
         
 class end_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         for child in view.children:
             child.disabled = True
         await view.edit_embed(interaction)
         view.stop()
+        await view.after_press(self, interaction)
 
 class show_page(discord.ui.Button):
     def __init__(self, label, emoji, style, row):
@@ -103,7 +118,9 @@ class goto_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
 
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         await interaction.response.send_modal(goto_modal(self))
+        await view.after_press(self, interaction)
 
 
 class lock_page(discord.ui.Button):
@@ -111,13 +128,15 @@ class lock_page(discord.ui.Button):
         super().__init__(label=label, emoji=emoji, style=style, row=row)
         
     async def callback(self, interaction):
+        await view.after_press(self, interaction)
         view = self.view
         view.clear_items()
         await view.edit_embed(interaction)
         view.stop()
+        await view.after_press(self, interaction)
 
 class Paginator(discord.ui.View):
-    def __init__(self, bot, embeds, destination, /, *, interactionfailed=None, check=None, timeout=None):
+    def __init__(self, bot, embeds, destination, /, *, interactionfailed=None, check=None, timeout=None, before_press=empty_func, after_press=empty_func):
         """A class which controls everything that happens
 
         Parameters
@@ -143,6 +162,9 @@ class Paginator(discord.ui.View):
         self.destination = destination
         self.interactionfailed=interactionfailed
         self.page_button = None
+        
+        self.before_press = before_press
+        self.after_press = after_press
 
     def default_pagination(self):
         self.add_button("first", label='first')
