@@ -139,7 +139,7 @@ class goto_modal(discord.ui.Modal, title="Go to"):
             else:
                 return await interaction.followup.send(content="Invalid number: aborting", ephemeral=True)
 
-            await self.view.before_press(self.button, interaction)
+            await view.before_press(self.button, interaction)
 
             view.update_view()
             await view.edit_embed(interaction)
