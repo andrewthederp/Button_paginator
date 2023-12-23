@@ -139,7 +139,7 @@ class goto_modal(discord.ui.Modal, title="Go to"):
             else:
                 return await interaction.followup.send(content="Invalid number: aborting", ephemeral=True)
 
-            await view.before_press(self.button, interaction)
+            await self.view.before_press(self.button, interaction)
 
             view.update_view()
             await view.edit_embed(interaction)
@@ -213,7 +213,7 @@ class Paginator(discord.ui.View):
         self.add_button("last", label='last')
         self.add_button("delete", label='Close paginator')
 
-    async def edit_embed(self, interaction):
+    async def edit_embed(self, interaction: discord.Interaction):
         current = self.embeds[self.page]
         if isinstance(current, str):
             await interaction.response.edit_message(content=current, embed=None, attachments=[], view=self)
@@ -230,8 +230,12 @@ class Paginator(discord.ui.View):
                     dct["embed"] = item
                 elif isinstance(item, discord.File):
                     dct["file"] = [item]
-            await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None),
-                                                    attachments=dct.get('file', None), view=self)
+            if interaction and not interaction.response.is_done():
+                await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None),
+                                                        attachments=dct.get('file', None), view=self)
+            else:
+                self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
+                                  attachments=dct.get('file', None), view=self)
 
     async def start(self):
         try:
