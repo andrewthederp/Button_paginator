@@ -234,7 +234,7 @@ class Paginator(discord.ui.View):
                 await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None),
                                                         attachments=dct.get('file', None), view=self)
             else:
-                self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
+                await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
                                   attachments=dct.get('file', None), view=self)
 
     async def start(self):
