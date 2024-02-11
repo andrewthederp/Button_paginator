@@ -230,12 +230,10 @@ class Paginator(discord.ui.View):
                     dct["embed"] = item
                 elif isinstance(item, discord.File):
                     dct["file"] = [item]
-            if interaction and not interaction.response.is_done():
-                await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None),
-                                                        attachments=dct.get('file', None), view=self)
-            else:
-                await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
-                                  attachments=dct.get('file', None), view=self)
+        if interaction and not interaction.response.is_done():
+            await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None), attachments=dct.get('file', None), view=self)
+        else:
+            await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None), attachments=dct.get('file', None), view=self)
 
     async def start(self):
         try:
