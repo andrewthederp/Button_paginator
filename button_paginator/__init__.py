@@ -3,8 +3,27 @@ from inspect import iscoroutinefunction as iscoro, isfunction as isfunc
 import discord
 
 
-async def empty_func(button_pressed, interaction):
+async def empty_func(_, __):
     pass
+
+
+class SelectPaginator(discord.ui.Select):
+    def __init__(self):
+        super().__init__()
+        self.embeds = {}
+
+    def add_paginator_option(self, *, embed: discord.Embed, option: discord.SelectOption):
+        self.append_option(option)
+        self.embeds[option.value.lower()] = embed
+
+    async def callback(self, interaction):
+        view = self.view
+        await view.before_press(self, interaction)
+
+        view.update_view()
+        await view.edit_embed(interaction, embed=self.embeds[self.values[0].lower()])
+
+        await view.after_press(self, interaction)
 
 
 class prev_page(discord.ui.Button):
@@ -194,6 +213,7 @@ class Paginator(discord.ui.View):
             The number of seconds to wait before timing out.
         """
         super().__init__(timeout=timeout)
+        self.message = None
         self.check = check
         self.bot = bot
         self.embeds = embeds
@@ -213,8 +233,8 @@ class Paginator(discord.ui.View):
         self.add_button("last", label='last')
         self.add_button("delete", label='Close paginator')
 
-    async def edit_embed(self, interaction: discord.Interaction):
-        current = self.embeds[self.page]
+    async def edit_embed(self, interaction: discord.Interaction, *, embed=None):
+        current = embed or self.embeds[self.page]
         if isinstance(current, str):
             await interaction.response.edit_message(content=current, embed=None, attachments=[], view=self)
         elif isinstance(current, discord.Embed):
@@ -230,20 +250,34 @@ class Paginator(discord.ui.View):
                     dct["embed"] = item
                 elif isinstance(item, discord.File):
                     dct["file"] = [item]
-        if interaction and not interaction.response.is_done():
-            await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None), attachments=dct.get('file', None), view=self)
-        else:
-            await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None), attachments=dct.get('file', None), view=self)
+            if interaction and not interaction.response.is_done():
+                await interaction.response.edit_message(content=dct.get("content", None), embed=dct.get("embed", None),
+                                                        attachments=dct.get('file', None), view=self)
+            else:
+                await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
+                                        attachments=dct.get('file', None), view=self)
 
     async def start(self):
         try:
             current = self.embeds[self.page]
             if isinstance(current, str):
-                self.message = await self.destination.send(content=current, embed=None, file=None, view=self)
+                if isinstance(self.destination, discord.Interaction):
+                    await self.destination.response.send_message(content=current, view=self)
+                    self.message = await self.destination.original_response()
+                else:
+                    self.message = await self.destination.send(content=current, view=self)
             elif isinstance(current, discord.Embed):
-                self.message = await self.destination.send(content=None, embed=current, file=None, view=self)
+                if isinstance(self.destination, discord.Interaction):
+                    await self.destination.response.send_message(embed=current, view=self)
+                    self.message = await self.destination.original_response()
+                else:
+                    self.message = await self.destination.send(embed=current, view=self)
             elif isinstance(current, discord.File):
-                self.message = await self.destination.send(content=None, embed=None, file=current, view=self)
+                if isinstance(self.destination, discord.Interaction):
+                    await self.destination.response.send_message(file=current, view=self)
+                    self.message = await self.destination.original_response()
+                else:
+                    self.message = await self.destination.send(file=current, view=self)
             elif isinstance(current, tuple):
                 dct = {}
                 for item in current:
@@ -253,9 +287,17 @@ class Paginator(discord.ui.View):
                         dct["embed"] = item
                     elif isinstance(item, discord.File):
                         dct["file"] = item
-                self.message = await self.destination.send(content=dct.get("content", None),
-                                                           embed=dct.get("embed", None), file=dct.get("file", None),
-                                                           view=self)
+
+                if isinstance(self.destination, discord.Interaction):
+                    await self.destination.response.send_message(content=dct.get("content", None),
+                                                                 embed=dct.get("embed", None),
+                                                                 file=dct.get("file", None),
+                                                                 view=self)
+                    self.message = await self.destination.original_response()
+                else:
+                    self.message = await self.destination.send(content=dct.get("content", None),
+                                                               embed=dct.get("embed", None), file=dct.get("file", None),
+                                                               view=self)
         except discord.HTTPException:
             self.stop()
 
